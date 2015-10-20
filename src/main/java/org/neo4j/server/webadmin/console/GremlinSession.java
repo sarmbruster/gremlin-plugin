@@ -27,7 +27,7 @@ import org.codehaus.groovy.tools.shell.IO;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.Pair;
 import org.neo4j.server.database.Database;
-import org.neo4j.server.logging.Logger;
+import static org.neo4j.kernel.impl.util.StringLogger.SYSTEM_ERR;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,7 +39,6 @@ import java.util.Map;
 
 public class GremlinSession implements ScriptSession {
     private static final String INIT_FUNCTION = "init()";
-    private static final Logger log = Logger.getLogger(GremlinSession.class);
     private final Database database;
     private final IO io;
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -95,7 +94,7 @@ public class GremlinSession implements ScriptSession {
             }
             tx.success();
         } catch (GroovyRuntimeException ex) {
-            log.error(ex);
+            SYSTEM_ERR.error(ex.getMessage(), ex);
             result = ex.getMessage();
         }
         return Pair.of(result, null);

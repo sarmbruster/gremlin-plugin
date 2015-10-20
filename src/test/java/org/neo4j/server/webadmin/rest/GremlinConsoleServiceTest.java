@@ -36,7 +36,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.kernel.AbstractGraphDatabase;
+import org.neo4j.kernel.GraphDatabaseAPI;
+import org.neo4j.kernel.logging.DevNullLoggingService;
 import org.neo4j.server.database.Database;
 import org.neo4j.server.database.WrappedDatabase;
 import org.neo4j.server.rest.repr.OutputFormat;
@@ -44,8 +45,7 @@ import org.neo4j.server.rest.repr.formats.JsonFormat;
 import org.neo4j.server.webadmin.console.ConsoleSessionFactory;
 import org.neo4j.server.webadmin.console.GremlinSession;
 import org.neo4j.server.webadmin.console.ScriptSession;
-import org.neo4j.server.webadmin.rest.console.ConsoleService;
-import org.neo4j.test.ImpermanentGraphDatabase;
+import org.neo4j.server.rest.management.console.ConsoleService;
 import org.neo4j.test.TestGraphDatabaseFactory;
 
 public class GremlinConsoleServiceTest implements ConsoleSessionFactory
@@ -89,7 +89,7 @@ public class GremlinConsoleServiceTest implements ConsoleSessionFactory
     public void advertisesAvailableConsoleEngines() throws URISyntaxException, UnsupportedEncodingException
     {
         
-        ConsoleService consoleServiceWithShellAndGremlin = new ConsoleService( new GremlinAndShellConsoleSessionFactory(), null, new OutputFormat( new JsonFormat(), uri, null ) );
+        ConsoleService consoleServiceWithShellAndGremlin = new ConsoleService( new GremlinAndShellConsoleSessionFactory(), null, DevNullLoggingService.DEV_NULL, new OutputFormat( new JsonFormat(), uri, null ) );
         
         String response = decode( consoleServiceWithShellAndGremlin.getServiceDefinition());
 
@@ -119,8 +119,8 @@ public class GremlinConsoleServiceTest implements ConsoleSessionFactory
     public void setUp() throws Exception
     {
         GraphDatabaseService db = new TestGraphDatabaseFactory().newImpermanentDatabase();
-        this.database = new WrappedDatabase((AbstractGraphDatabase) db);
-        this.consoleService = new ConsoleService( this, database, new OutputFormat( new JsonFormat(), uri, null ) );
+        this.database = new WrappedDatabase((GraphDatabaseAPI) db);
+        this.consoleService = new ConsoleService( this, database, DevNullLoggingService.DEV_NULL, new OutputFormat( new JsonFormat(), uri, null ) );
     }
 
     @After

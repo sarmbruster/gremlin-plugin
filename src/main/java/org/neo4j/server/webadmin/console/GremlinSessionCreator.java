@@ -22,6 +22,8 @@ package org.neo4j.server.webadmin.console;
 import org.neo4j.server.database.CypherExecutor;
 import org.neo4j.server.database.Database;
 
+import javax.servlet.http.HttpServletRequest;
+
 public class GremlinSessionCreator implements ConsoleSessionCreator
 {
     public String name()
@@ -30,8 +32,7 @@ public class GremlinSessionCreator implements ConsoleSessionCreator
     }
 
     @Override
-    public ScriptSession newSession( Database database, CypherExecutor cypherExecutor )
-    {
+    public ScriptSession newSession(Database database, CypherExecutor cypherExecutor, HttpServletRequest httpServletRequest) {
         return new GremlinSession( database );
     }
 }

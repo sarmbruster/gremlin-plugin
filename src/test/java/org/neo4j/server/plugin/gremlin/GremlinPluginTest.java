@@ -39,18 +39,21 @@ import org.json.simple.parser.ParseException;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.kernel.GraphDatabaseAPI;
 import org.neo4j.server.rest.repr.BadInputException;
 import org.neo4j.server.rest.repr.OutputFormat;
 import org.neo4j.server.rest.repr.Representation;
 import org.neo4j.server.rest.repr.formats.JsonFormat;
 import org.neo4j.test.ImpermanentGraphDatabase;
+import org.neo4j.test.TestGraphDatabaseFactory;
 
 import javax.ws.rs.core.Response;
 
 public class GremlinPluginTest
 {
-    private static ImpermanentGraphDatabase neo4j = null;
+    private static GraphDatabaseService neo4j = null;
     private static GremlinPlugin plugin = null;
     private static OutputFormat json = null;
     private static JSONParser parser = new JSONParser();
@@ -60,7 +63,7 @@ public class GremlinPluginTest
     {
         json = new OutputFormat( new JsonFormat(),
                 new URI( "http://localhost/" ), null );
-        neo4j = new ImpermanentGraphDatabase();
+        neo4j = new TestGraphDatabaseFactory().newImpermanentDatabase();
         plugin = new GremlinPlugin();
         Graph graph = new Neo4j2Graph( neo4j );
 //        graph.clear();
@@ -207,7 +210,7 @@ public class GremlinPluginTest
     public void testExecuteScriptGraph() throws Exception
     {
         String ret = (String) parser.parse(entityToString( json.ok( GremlinPluginTest.executeTestScript("g", null) ) .getEntity()));
-        Assert.assertEquals( ret, "ImpermanentGraphDatabase [" + neo4j.getStoreDir() + "]" );
+        Assert.assertEquals( ret, " [" + ((GraphDatabaseAPI)neo4j).getStoreDir() + "]" );
     }
 
     @Test
